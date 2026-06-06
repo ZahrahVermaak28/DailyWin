@@ -15,23 +15,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = UserAZU::factory()->admin()->create([
-            'name' => 'Admin User',
+        // Create Admin User (Uyathandwa - Group Leader)
+        $uyathandwa = UserAZU::factory()->admin()->create([
+            'name' => 'Uyathandwa Ngomana',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
         ]);
 
-        $teamMembers = collect([
-            ['name' => 'Ava Johnson', 'email' => 'ava.johnson@example.com'],
-            ['name' => 'Brian Smith', 'email' => 'brian.smith@example.com'],
-            ['name' => 'Chipo Moyo', 'email' => 'chipo.moyo@example.com'],
-            ['name' => 'Daniel Carter', 'email' => 'daniel.carter@example.com'],
-            ['name' => 'Emily Brown', 'email' => 'emily.brown@example.com'],
-        ])->map(fn (array $user) => UserAZU::factory()->teamMember()->create([
-            ...$user,
+        // Create Team Members (Amanda and Zahrah)
+        $amanda = UserAZU::factory()->teamMember()->create([
+            'name' => 'Amanda Msuthu',
+            'email' => 'amanda@example.com',
             'password' => Hash::make('password'),
-        ]));
+        ]);
 
+        $zahrah = UserAZU::factory()->teamMember()->create([
+            'name' => 'Zahrah Martin',
+            'email' => 'zahrah@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        // Create Guest Users
         collect([
             ['name' => 'Guest Reviewer', 'email' => 'guest.reviewer@example.com'],
             ['name' => 'External Auditor', 'email' => 'external.auditor@example.com'],
@@ -40,99 +44,102 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]));
 
+        // Create Categories
         $categories = collect([
-            ['name' => 'Bug Fixes', 'slug' => 'bug-fixes'],
-            ['name' => 'Security', 'slug' => 'security'],
-            ['name' => 'Customer Support', 'slug' => 'customer-support'],
-            ['name' => 'Documentation', 'slug' => 'documentation'],
-            ['name' => 'Reporting', 'slug' => 'reporting'],
+            ['name' => 'Database', 'slug' => 'database'],
+            ['name' => 'Frontend', 'slug' => 'frontend'],
+            ['name' => 'Backend', 'slug' => 'backend'],
             ['name' => 'Testing', 'slug' => 'testing'],
-            ['name' => 'Refactoring', 'slug' => 'refactoring'],
+            ['name' => 'Deployment', 'slug' => 'deployment'],
+            ['name' => 'Documentation', 'slug' => 'documentation'],
         ])->map(fn (array $category) => CategoryAZU::create($category));
 
+        // YOUR 8 TASKS with YOUR GROUP MEMBERS
         $tasks = [
             [
-                'title' => 'Fix critical login bug affecting production users',
-                'description' => 'Investigate the failed login reports, identify the root cause, deploy a tested fix, and confirm that affected production users can sign in again.',
+                'title' => 'Design Database Schema',
+                'description' => 'Create ERD diagram and design tables for users, tasks, categories, and relationships with proper foreign keys.',
+                'priority' => 'high',
+                'status' => 'completed',
+                'due_date' => now()->subDays(5)->toDateString(),
+                'assigned_to' => $amanda->id,
+                'categories' => ['Database'],
+            ],
+            [
+                'title' => 'Create Login & Registration',
+                'description' => 'Implement authentication using Laravel Breeze with custom role-based login for admin, team members, and guests.',
                 'priority' => 'high',
                 'status' => 'in_progress',
-                'due_date' => now()->addDays(1)->toDateString(),
-                'categories' => ['Bug Fixes', 'Customer Support'],
-            ],
-            [
-                'title' => 'Deploy security patch for CVE-2024-123 by Friday',
-                'description' => 'Apply the required security patch, run regression checks, and document the deployment steps for audit tracking.',
-                'priority' => 'high',
-                'status' => 'pending',
-                'due_date' => now()->next('Friday')->toDateString(),
-                'categories' => ['Security'],
-            ],
-            [
-                'title' => 'Resolve customer payment issue #4423',
-                'description' => 'Review the failed payment logs for ticket #4423, correct the billing workflow issue, and update the customer support team with the resolution.',
-                'priority' => 'high',
-                'status' => 'pending',
                 'due_date' => now()->addDays(2)->toDateString(),
-                'categories' => ['Customer Support', 'Bug Fixes'],
+                'assigned_to' => $zahrah->id,
+                'categories' => ['Frontend', 'Backend'],
             ],
             [
-                'title' => 'Complete Q3 financial report for stakeholders',
-                'description' => 'Compile the final Q3 financial figures, verify the totals, and prepare the stakeholder-ready report for review.',
-                'priority' => 'medium',
+                'title' => 'Develop User Dashboard',
+                'description' => 'Create dashboard showing task statistics, charts, and recent activity for each user role.',
+                'priority' => 'high',
                 'status' => 'in_progress',
-                'due_date' => now()->addWeek()->toDateString(),
-                'categories' => ['Reporting'],
+                'due_date' => now()->addDays(3)->toDateString(),
+                'assigned_to' => $uyathandwa->id,
+                'categories' => ['Frontend'],
             ],
             [
-                'title' => 'Review pull request #127 from development branch',
-                'description' => 'Check the code changes in pull request #127, test the affected workflow locally, and leave clear review comments for the developer.',
+                'title' => 'Implement Task Assignment',
+                'description' => 'Allow admins to assign tasks to team members and guests with email notifications.',
                 'priority' => 'medium',
                 'status' => 'pending',
-                'due_date' => now()->addDays(4)->toDateString(),
-                'categories' => ['Testing'],
+                'due_date' => now()->addDays(5)->toDateString(),
+                'assigned_to' => $amanda->id,
+                'categories' => ['Backend'],
             ],
             [
-                'title' => 'Update API documentation for new endpoints',
-                'description' => 'Document the new API endpoints, include request and response examples, and confirm the documentation matches the current implementation.',
+                'title' => 'Implement Task Status Tracking',
+                'description' => 'Add status options: Pending, In Progress, Completed with visual badges and filtering.',
                 'priority' => 'medium',
                 'status' => 'pending',
                 'due_date' => now()->addDays(6)->toDateString(),
-                'categories' => ['Documentation'],
+                'assigned_to' => $zahrah->id,
+                'categories' => ['Backend', 'Frontend'],
             ],
             [
-                'title' => 'Refactor old service classes for better maintainability',
-                'description' => 'Clean up outdated service classes, remove duplicated logic, and keep behavior unchanged while improving readability.',
+                'title' => 'Create Notification System',
+                'description' => 'Send email reminders for tasks due in 24 hours using Laravel Mail and scheduler.',
+                'priority' => 'medium',
+                'status' => 'pending',
+                'due_date' => now()->addDays(7)->toDateString(),
+                'assigned_to' => $uyathandwa->id,
+                'categories' => ['Backend'],
+            ],
+            [
+                'title' => 'Test Application Features',
+                'description' => 'Write unit tests and perform manual testing of all CRUD operations for tasks, categories, and user roles.',
                 'priority' => 'low',
                 'status' => 'pending',
-                'due_date' => now()->addWeeks(2)->toDateString(),
-                'categories' => ['Refactoring'],
-            ],
-            [
-                'title' => 'Write unit tests for notification service',
-                'description' => 'Add focused unit tests for the notification service to cover successful delivery, failed delivery, and invalid recipient scenarios.',
-                'priority' => 'low',
-                'status' => 'in_progress',
                 'due_date' => now()->addDays(10)->toDateString(),
+                'assigned_to' => $amanda->id,
                 'categories' => ['Testing'],
             ],
             [
-                'title' => 'Create onboarding guide for new developers',
-                'description' => 'Write a practical onboarding guide that explains local setup, coding standards, common commands, and the first tasks new developers should complete.',
+                'title' => 'Deploy Application',
+                'description' => 'Push to GitHub, write documentation, and prepare final submission with demo video.',
                 'priority' => 'low',
-                'status' => 'completed',
-                'due_date' => now()->addWeeks(3)->toDateString(),
-                'categories' => ['Documentation'],
+                'status' => 'pending',
+                'due_date' => now()->addDays(14)->toDateString(),
+                'assigned_to' => $uyathandwa->id,
+                'categories' => ['Deployment', 'Documentation'],
             ],
         ];
 
-        foreach ($tasks as $index => $taskData) {
+        // Create all tasks
+        foreach ($tasks as $taskData) {
             $taskCategories = $taskData['categories'];
             unset($taskData['categories']);
+            unset($taskData['assigned_to']);
 
             $task = TaskAZU::create([
                 ...$taskData,
-                'created_by' => $admin->id,
-                'assigned_to' => $teamMembers[$index % $teamMembers->count()]->id,
+                'created_by' => $uyathandwa->id,
+                'assigned_to' => $taskData['assigned_to'] ?? $uyathandwa->id,
             ]);
 
             $task->categories()->sync(
@@ -142,5 +149,25 @@ class DatabaseSeeder extends Seeder
                     ->all()
             );
         }
+
+        $this->command->info('✅ Database seeded successfully!');
+        $this->command->info('');
+        $this->command->info('📋 Team Members:');
+        $this->command->info('   👑 Admin: Uyathandwa Ngomana');
+        $this->command->info('   👤 Team: Amanda Msuthu');
+        $this->command->info('   👤 Team: Zahrah Martin');
+        $this->command->info('');
+        $this->command->info('📋 Tasks Created:');
+        $this->command->info('   1. Design Database Schema - Amanda ✅ Completed');
+        $this->command->info('   2. Create Login & Registration - Zahrah 🔄 In Progress');
+        $this->command->info('   3. Develop User Dashboard - Uyathandwa 🔄 In Progress');
+        $this->command->info('   4. Implement Task Assignment - Amanda ⏳ Pending');
+        $this->command->info('   5. Implement Task Status Tracking - Zahrah ⏳ Pending');
+        $this->command->info('   6. Create Notification System - Uyathandwa ⏳ Pending');
+        $this->command->info('   7. Test Application Features - Amanda ⏳ Pending');
+        $this->command->info('   8. Deploy Application - Uyathandwa ⏳ Pending');
+        $this->command->info('');
+        $this->command->info('📧 Login: admin@example.com / password');
+        $this->command->info('👥 Group AZU: Uyathandwa • Amanda • Zahrah');
     }
 }
